@@ -1,0 +1,86 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Manage Patients{% endblock %}
+
+{% block content %}
+<div>
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+    <div>
+      <h2 style="font-weight:800;color:var(--primary);margin-bottom:4px;">👥 Manage Patients</h2>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin:0;">View and manage all registered patients</p>
+    </div>
+    <form method="GET" style="display:flex;gap:8px;">
+      <input type="text" name="search" class="form-control" placeholder="Search by name, email, phone..."
+        value="{{ search }}" style="min-width:240px;">
+      <button type="submit" class="btn-primary-custom" style="padding:10px 16px;white-space:nowrap;">
+        <i class="fas fa-search"></i>
+      </button>
+    </form>
+  </div>
+
+  <div class="table-card" data-aos="fade-up">
+    <div class="table-card-header">
+      <span class="table-card-title">
+        <i class="fas fa-users" style="color:var(--accent);"></i> All Patients
+        <span style="background:rgba(26,35,126,0.1);color:var(--primary);padding:2px 10px;border-radius:20px;font-size:0.8rem;margin-left:8px;">{{ patients|length }}</span>
+      </span>
+      <input id="tableSearch" type="text" class="form-control" placeholder="Quick filter..." style="max-width:200px;font-size:0.85rem;padding:6px 12px;">
+    </div>
+
+    {% if patients %}
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead>
+          <tr><th>#</th><th>Patient</th><th>Phone</th><th>Gender</th><th>Blood</th><th>Verified</th><th>Joined</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          {% for p in patients %}
+          <tr class="searchable-row">
+            <td style="font-weight:700;color:var(--primary);">{{ loop.index }}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:38px;height:38px;background:var(--gradient-main);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:0.9rem;flex-shrink:0;">
+                  {{ p.name[0].upper() }}
+                </div>
+                <div>
+                  <div style="font-weight:600;color:var(--primary);font-size:0.9rem;">{{ p.name }}</div>
+                  <div style="font-size:0.78rem;color:var(--text-muted);">{{ p.email }}</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-size:0.88rem;">{{ p.phone or '—' }}</td>
+            <td style="font-size:0.88rem;">{{ p.gender or '—' }}</td>
+            <td>
+              {% if p.blood_group %}
+              <span style="background:rgba(244,67,54,0.1);color:#c62828;padding:3px 10px;border-radius:20px;font-size:0.78rem;font-weight:700;">{{ p.blood_group }}</span>
+              {% else %}—{% endif %}
+            </td>
+            <td>
+              <span class="status-badge {% if p.is_verified %}status-verified{% else %}status-pending{% endif %}">
+                {% if p.is_verified %}✓ Yes{% else %}⚠ No{% endif %}
+              </span>
+            </td>
+            <td style="font-size:0.82rem;color:var(--text-muted);">{{ p.created_at.strftime('%d %b %Y') if p.created_at else '—' }}</td>
+            <td>
+              <form id="del-{{ p.id }}" method="POST" action="{{ url_for('admin.delete_patient', user_id=p.id) }}" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="button" class="action-chip chip-cancel"
+                  onclick="confirmDelete('Delete patient {{ p.name }}? This will also delete their appointments.', 'del-{{ p.id }}')">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div style="padding:60px;text-align:center;">
+      <div style="font-size:3.5rem;margin-bottom:16px;">👥</div>
+      <h4 style="color:var(--primary);">No Patients Found</h4>
+      <p style="color:var(--text-muted);">{% if search %}No results for "{{ search }}".{% else %}No patients registered yet.{% endif %}</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

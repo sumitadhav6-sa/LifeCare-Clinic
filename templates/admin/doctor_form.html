@@ -1,0 +1,166 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}{{ action }} Doctor{% endblock %}
+
+{% block content %}
+<div>
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <a href="{{ url_for('admin.doctors') }}" style="width:40px;height:40px;background:white;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--primary);text-decoration:none;box-shadow:var(--shadow-sm);">
+      <i class="fas fa-arrow-left"></i>
+    </a>
+    <div>
+      <h2 style="font-weight:800;color:var(--primary);margin-bottom:4px;">
+        {% if action == 'Add' %}➕ Add New Doctor{% else %}✏️ Edit Doctor{% endif %}
+      </h2>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin:0;">
+        {% if action == 'Add' %}Fill in the doctor's details below{% else %}Update Dr. {{ doctor.name }}'s information{% endif %}
+      </p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="form-section" data-aos="fade-up">
+        <form method="POST" class="needs-validation" novalidate>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+          <div class="row g-3">
+            <!-- Basic Info -->
+            <div class="col-12">
+              <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid rgba(255,111,0,0.15);">
+                Basic Information
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Full Name <span style="color:red;">*</span></label>
+              <input type="text" name="name" class="form-control" required
+                value="{{ doctor.name if doctor else '' }}" placeholder="Doctor's full name">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Specialization <span style="color:red;">*</span></label>
+              <input type="text" name="specialization" class="form-control" required
+                value="{{ doctor.specialization if doctor else '' }}" placeholder="e.g. Cardiologist">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-control"
+                value="{{ doctor.email if doctor else '' }}" placeholder="doctor@clinic.com">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Phone</label>
+              <input type="tel" name="phone" class="form-control"
+                value="{{ doctor.phone if doctor else '' }}" placeholder="10-digit number">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Qualification</label>
+              <input type="text" name="qualification" class="form-control"
+                value="{{ doctor.qualification if doctor else '' }}" placeholder="MBBS, MD, DM etc.">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Experience (Years)</label>
+              <input type="number" name="experience" class="form-control" min="0" max="60"
+                value="{{ doctor.experience if doctor else 0 }}">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Consultation Fee (₹)</label>
+              <input type="number" name="fee" class="form-control" min="0" step="50"
+                value="{{ doctor.fee if doctor else 500 }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Rating (0-5)</label>
+              <input type="number" name="rating" class="form-control" min="0" max="5" step="0.1"
+                value="{{ doctor.rating if doctor else 4.5 }}">
+            </div>
+            {% if doctor %}
+            <div class="col-md-6">
+              <label class="form-label">Status</label>
+              <div class="form-check mt-2">
+                <input class="form-check-input" type="checkbox" name="is_active" id="isActive"
+                  {% if doctor.is_active %}checked{% endif %}>
+                <label class="form-check-label" for="isActive">Active (visible to patients)</label>
+              </div>
+            </div>
+            {% endif %}
+
+            <!-- Available Days -->
+            <div class="col-12 mt-2">
+              <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid rgba(255,111,0,0.15);">
+                Schedule
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Available Days</label>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                {% set selected_days = doctor.get_days_list() if doctor else ['Mon','Tue','Wed','Thu','Fri'] %}
+                {% for day in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}
+                <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;border:2px solid rgba(26,35,126,0.15);border-radius:8px;cursor:pointer;transition:all 0.3s;background:{% if day in selected_days %}rgba(26,35,126,0.1){% else %}white{% endif %};">
+                  <input type="checkbox" name="available_days" value="{{ day }}"
+                    {% if day in selected_days %}checked{% endif %} style="accent-color:var(--primary);">
+                  <span style="font-weight:600;font-size:0.88rem;color:var(--primary);">{{ day }}</span>
+                </label>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Available Time Slots</label>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                {% set selected_slots = doctor.get_slots_list() if doctor else ['09:00','10:00','11:00','14:00','15:00','16:00'] %}
+                {% for slot in ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','14:00','14:30','15:00','15:30','16:00','16:30','17:00','18:00'] %}
+                <label style="display:flex;align-items:center;gap:5px;padding:6px 12px;border:2px solid rgba(26,35,126,0.12);border-radius:7px;cursor:pointer;transition:all 0.3s;background:{% if slot in selected_slots %}rgba(255,111,0,0.1){% else %}white{% endif %};">
+                  <input type="checkbox" name="available_slots" value="{{ slot }}"
+                    {% if slot in selected_slots %}checked{% endif %} style="accent-color:var(--accent);">
+                  <span style="font-size:0.82rem;font-weight:600;color:var(--primary);">{{ slot }}</span>
+                </label>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Bio -->
+            <div class="col-12">
+              <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid rgba(255,111,0,0.15);">
+                Additional Info
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Photo URL (optional)</label>
+              <input type="url" name="photo" class="form-control"
+                value="{{ doctor.photo if doctor else '' }}" placeholder="https://example.com/doctor-photo.jpg">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Bio / About</label>
+              <textarea name="bio" class="form-control" rows="4"
+                placeholder="Short bio about the doctor...">{{ doctor.bio if doctor else '' }}</textarea>
+            </div>
+
+            <div class="col-12 d-flex gap-3 mt-2">
+              <button type="submit" class="btn-accent-custom ripple" style="padding:12px 28px;">
+                <i class="fas fa-save me-2"></i>
+                {% if action == 'Add' %}Add Doctor{% else %}Save Changes{% endif %}
+              </button>
+              <a href="{{ url_for('admin.doctors') }}" class="btn-primary-custom" style="padding:12px 28px;">
+                <i class="fas fa-times me-2"></i>Cancel
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tips Sidebar -->
+    <div class="col-lg-4">
+      <div class="table-card" data-aos="fade-up">
+        <div class="table-card-header">
+          <span class="table-card-title"><i class="fas fa-info-circle" style="color:var(--accent);"></i>Tips</span>
+        </div>
+        <div style="padding:16px;font-size:0.85rem;color:var(--text-muted);line-height:1.8;">
+          <p>• <strong>Name & Specialization</strong> are required fields.</p>
+          <p>• Select all days the doctor is available.</p>
+          <p>• Add multiple time slots for better booking flexibility.</p>
+          <p>• Provide a photo URL for a better doctor card appearance.</p>
+          <p>• Rating should be between 0.0 and 5.0.</p>
+          <p>• Deactivated doctors won't appear to patients.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "patient/base_patient.html" %}
+{% block title %}My Appointments{% endblock %}
+
+{% block content %}
+<div>
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+    <div>
+      <h2 style="font-weight:800;color:var(--primary);margin-bottom:4px;">📋 My Appointments</h2>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin:0;">Track and manage your medical appointments</p>
+    </div>
+    <a href="{{ url_for('patient.book_appointment') }}" class="btn-accent-custom">
+      <i class="fas fa-plus me-2"></i>Book New
+    </a>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;">
+    {% for status, label, icon in [('all','All','📋'),('pending','Pending','⏳'),('approved','Approved','✅'),('cancelled','Cancelled','❌')] %}
+    <a href="{{ url_for('patient.my_appointments', status=status) }}"
+      style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:50px;text-decoration:none;font-size:0.85rem;font-weight:600;transition:all 0.3s;
+      {% if filter_status == status %}background:var(--gradient-main);color:white;box-shadow:0 4px 15px rgba(26,35,126,0.3);{% else %}background:white;color:var(--text-muted);border:1px solid rgba(26,35,126,0.12);{% endif %}">
+      {{ icon }} {{ label }}
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- Appointments Table -->
+  <div class="table-card" data-aos="fade-up">
+    <div class="table-card-header">
+      <span class="table-card-title">
+        <i class="fas fa-calendar-alt" style="color:var(--accent);"></i>
+        {{ filter_status.capitalize() if filter_status != 'all' else 'All' }} Appointments
+        <span style="background:rgba(26,35,126,0.1);color:var(--primary);padding:2px 10px;border-radius:20px;font-size:0.8rem;margin-left:8px;">{{ appointments|length }}</span>
+      </span>
+    </div>
+
+    {% if appointments %}
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Doctor</th>
+            <th>Date & Time</th>
+            <th>Symptoms</th>
+            <th>Status</th>
+            <th>Notes</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appt in appointments %}
+          <tr class="searchable-row">
+            <td style="font-weight:700;color:var(--primary);">#{{ appt.id }}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:38px;height:38px;background:var(--gradient-main);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">👨‍⚕️</div>
+                <div>
+                  <div style="font-weight:600;color:var(--primary);font-size:0.9rem;">Dr. {{ appt.doctor.name }}</div>
+                  <div style="font-size:0.78rem;color:var(--text-muted);">{{ appt.doctor.specialization }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div style="font-weight:600;font-size:0.88rem;">{{ appt.date.strftime('%d %b %Y') }}</div>
+              <div>
+                <span style="background:rgba(26,35,126,0.08);color:var(--primary);padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:600;">
+                  <i class="fas fa-clock me-1"></i>{{ appt.time_slot }}
+                </span>
+              </div>
+            </td>
+            <td style="max-width:180px;">
+              <span style="font-size:0.85rem;color:var(--text-muted);">
+                {{ appt.symptoms[:60] + '...' if appt.symptoms and appt.symptoms|length > 60 else (appt.symptoms or '—') }}
+              </span>
+            </td>
+            <td>
+              <span class="status-badge status-{{ appt.status }}">
+                {% if appt.status == 'approved' %}✓{% elif appt.status == 'pending' %}⏳{% else %}✗{% endif %}
+                {{ appt.status.capitalize() }}
+              </span>
+            </td>
+            <td style="font-size:0.82rem;color:var(--text-muted);">
+              {{ appt.notes[:50] + '...' if appt.notes and appt.notes|length > 50 else (appt.notes or '—') }}
+            </td>
+            <td>
+              {% if appt.status == 'pending' %}
+              <form id="cancel-{{ appt.id }}" method="POST" action="{{ url_for('patient.cancel_appointment', appt_id=appt.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="button" class="action-chip chip-cancel"
+                  onclick="confirmDelete('Cancel this appointment?', 'cancel-{{ appt.id }}')">
+                  <i class="fas fa-times"></i> Cancel
+                </button>
+              </form>
+              {% else %}
+              <span style="font-size:0.82rem;color:var(--text-muted);">—</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% else %}
+    <div style="padding:60px 24px;text-align:center;">
+      <div style="font-size:4rem;margin-bottom:20px;">📭</div>
+      <h4 style="color:var(--primary);font-weight:700;margin-bottom:8px;">No Appointments Found</h4>
+      <p style="color:var(--text-muted);max-width:400px;margin:0 auto 24px;">
+        {% if filter_status != 'all' %}
+          No {{ filter_status }} appointments. <a href="{{ url_for('patient.my_appointments') }}" style="color:var(--accent);">View all</a>
+        {% else %}
+          You haven't booked any appointments yet.
+        {% endif %}
+      </p>
+      <a href="{{ url_for('patient.book_appointment') }}" class="btn-accent-custom">
+        <i class="fas fa-plus me-2"></i>Book Your First Appointment
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

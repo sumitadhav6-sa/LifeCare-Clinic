@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Contact Us{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <div class="container">
+    <nav aria-label="breadcrumb" class="breadcrumb-custom">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('public.index') }}">Home</a></li>
+        <li class="breadcrumb-item active">Contact</li>
+      </ol>
+    </nav>
+    <h1 class="page-header-title" data-aos="fade-up">Contact Us</h1>
+    <p class="page-header-subtitle">We're here to help you 24/7</p>
+  </div>
+</div>
+
+<section style="padding:80px 0;">
+  <div class="container">
+    <div class="row g-5">
+      <!-- Contact Info -->
+      <div class="col-lg-5" data-aos="fade-right">
+        <span class="section-badge">Get In Touch</span>
+        <h2 class="section-title mt-2">We'd Love to <span class="accent-text">Hear From You</span></h2>
+        <div class="section-divider" style="margin:16px 0 24px;"></div>
+
+        <div class="d-flex flex-column gap-4">
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:52px;height:52px;background:linear-gradient(135deg,rgba(26,35,126,0.1),rgba(255,111,0,0.1));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;">📍</div>
+            <div>
+              <div style="font-weight:700;color:var(--primary);margin-bottom:4px;">Address</div>
+              <div style="color:var(--text-muted);font-size:0.9rem;line-height:1.6;">123 Health Street, Medical Colony<br>New Delhi – 110001, India</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:52px;height:52px;background:linear-gradient(135deg,rgba(26,35,126,0.1),rgba(255,111,0,0.1));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;">📞</div>
+            <div>
+              <div style="font-weight:700;color:var(--primary);margin-bottom:4px;">Phone</div>
+              <div style="color:var(--text-muted);font-size:0.9rem;">+91 98765 43210</div>
+              <div style="color:var(--text-muted);font-size:0.9rem;">+91 11 2345 6789</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:52px;height:52px;background:linear-gradient(135deg,rgba(26,35,126,0.1),rgba(255,111,0,0.1));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;">📧</div>
+            <div>
+              <div style="font-weight:700;color:var(--primary);margin-bottom:4px;">Email</div>
+              <div style="color:var(--text-muted);font-size:0.9rem;">info@lifecareclinic.com</div>
+              <div style="color:var(--text-muted);font-size:0.9rem;">appointments@lifecareclinic.com</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:52px;height:52px;background:linear-gradient(135deg,rgba(26,35,126,0.1),rgba(255,111,0,0.1));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;">🕐</div>
+            <div>
+              <div style="font-weight:700;color:var(--primary);margin-bottom:4px;">Working Hours</div>
+              <div style="color:var(--text-muted);font-size:0.9rem;">Monday – Saturday: 9:00 AM – 7:00 PM</div>
+              <div style="color:var(--text-muted);font-size:0.9rem;">Sunday: 10:00 AM – 2:00 PM</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emergency Banner -->
+        <div style="background:linear-gradient(135deg,#b71c1c,#e53935);border-radius:16px;padding:20px 24px;margin-top:32px;display:flex;align-items:center;gap:16px;">
+          <div style="font-size:2rem;">🚑</div>
+          <div>
+            <div style="color:white;font-weight:800;font-size:1rem;">24/7 Emergency</div>
+            <div style="color:rgba(255,255,255,0.8);font-size:0.88rem;">Call: 112 or +91 98765 43210</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="col-lg-7" data-aos="fade-left">
+        <div class="form-section">
+          <h3 style="color:var(--primary);font-weight:800;margin-bottom:24px;">
+            <i class="fas fa-paper-plane me-2" style="color:var(--accent);"></i>Send Us a Message
+          </h3>
+          <form onsubmit="handleContact(event)" class="needs-validation" novalidate>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" placeholder="Your name" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-control" placeholder="your@email.com" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" placeholder="+91 XXXXX XXXXX">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Subject</label>
+                <select class="form-select">
+                  <option value="">Select subject...</option>
+                  <option>Appointment Query</option>
+                  <option>General Inquiry</option>
+                  <option>Emergency</option>
+                  <option>Feedback</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Message</label>
+                <textarea class="form-control" rows="5" placeholder="Write your message here..." required></textarea>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn-primary-custom ripple" style="padding:14px 32px;font-size:1rem;">
+                  <i class="fas fa-paper-plane me-2"></i>Send Message
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function handleContact(e) {
+  e.preventDefault();
+  Toast.success('Message sent successfully! We will contact you soon.', 'Message Sent');
+  e.target.reset();
+}
+</script>
+{% endblock %}

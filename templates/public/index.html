@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<!-- ═══ HERO SECTION ═══ -->
+<section class="hero-section">
+  <!-- Floating shapes -->
+  <div class="hero-shape hero-shape-1"></div>
+  <div class="hero-shape hero-shape-2"></div>
+  <div class="hero-shape hero-shape-3"></div>
+  <div class="hero-shape hero-shape-4"></div>
+
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="row align-items-center g-5">
+      <!-- Left Content -->
+      <div class="col-lg-6">
+        <div class="hero-badge">
+          <span class="pulse-dot"></span>
+          Trusted Healthcare Since 2005
+        </div>
+        <h1 class="hero-title">
+          Your Health Is Our<br>
+          <span class="highlight">Top Priority</span>
+        </h1>
+        <p class="hero-desc">
+          Experience world-class medical care with compassionate doctors,
+          state-of-the-art facilities, and seamless appointment booking.
+          Your wellness journey starts here.
+        </p>
+        <div class="hero-cta">
+          <a href="{{ url_for('patient.book_appointment') }}" class="btn-hero-primary ripple">
+            <i class="fas fa-calendar-plus"></i>
+            Book Appointment
+          </a>
+          <a href="{{ url_for('public.doctors') }}" class="btn-hero-outline">
+            <i class="fas fa-user-md"></i>
+            Meet Our Doctors
+          </a>
+        </div>
+
+        <!-- Stats -->
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-number" data-counter="5000" data-suffix="+">0</div>
+            <div class="stat-label">Happy Patients</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" data-counter="20" data-suffix="+">0</div>
+            <div class="stat-label">Expert Doctors</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" data-counter="15" data-suffix="+">0</div>
+            <div class="stat-label">Specializations</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" data-counter="19" data-suffix=" Yrs">0</div>
+            <div class="stat-label">Of Excellence</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Visual -->
+      <div class="col-lg-6 hero-visual">
+        <div class="hero-card">
+          <!-- Appointment Card Preview -->
+          <div style="margin-bottom:20px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+              <span style="color:rgba(255,255,255,0.9);font-weight:700;font-size:1rem;">Today's Appointments</span>
+              <span class="availability-badge"><span class="pulse-dot"></span> Live</span>
+            </div>
+          </div>
+
+          <!-- Doctor Mini Cards -->
+          <div class="doctor-mini-card">
+            <div class="doctor-avatar">👨‍⚕️</div>
+            <div style="flex:1">
+              <div style="font-weight:700;font-size:0.9rem;">Dr. Sharma</div>
+              <div style="font-size:0.78rem;opacity:0.7;">Cardiologist · 10:00 AM</div>
+            </div>
+            <span style="background:rgba(0,200,83,0.2);color:#69f0ae;padding:4px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;">✓ Approved</span>
+          </div>
+
+          <div class="doctor-mini-card">
+            <div class="doctor-avatar">👩‍⚕️</div>
+            <div style="flex:1">
+              <div style="font-weight:700;font-size:0.9rem;">Dr. Priya</div>
+              <div style="font-size:0.78rem;opacity:0.7;">Pediatrician · 11:30 AM</div>
+            </div>
+            <span style="background:rgba(255,171,0,0.2);color:#ffcc02;padding:4px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;">⏳ Pending</span>
+          </div>
+
+          <div class="doctor-mini-card">
+            <div class="doctor-avatar">🧑‍⚕️</div>
+            <div style="flex:1">
+              <div style="font-weight:700;font-size:0.9rem;">Dr. Kapoor</div>
+              <div style="font-size:0.78rem;opacity:0.7;">Orthopedic · 2:00 PM</div>
+            </div>
+            <span style="background:rgba(255,171,0,0.2);color:#ffcc02;padding:4px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;">⏳ Pending</span>
+          </div>
+
+          <!-- Quick Book Button -->
+          <a href="{{ url_for('auth.register') }}" class="btn-accent-custom w-100 mt-3 justify-content-center" style="border-radius:12px;">
+            <i class="fas fa-plus-circle"></i> Book Your Slot Now
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS COUNTER SECTION ═══ -->
+<section class="stats-section">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-6 col-md-3">
+        <div class="stat-card" data-aos="zoom-in" data-aos-delay="0">
+          <span class="stat-card-icon">🏥</span>
+          <div class="stat-card-number" data-counter="5280" data-suffix="+">0</div>
+          <div class="stat-card-label">Patients Treated</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card" data-aos="zoom-in" data-aos-delay="100">
+          <span class="stat-card-icon">👨‍⚕️</span>
+          <div class="stat-card-number" data-counter="24" data-suffix="+">0</div>
+          <div class="stat-card-label">Specialist Doctors</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card" data-aos="zoom-in" data-aos-delay="200">
+          <span class="stat-card-icon">⭐</span>
+          <div class="stat-card-number" data-counter="98" data-suffix="%">0</div>
+          <div class="stat-card-label">Patient Satisfaction</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card" data-aos="zoom-in" data-aos-delay="300">
+          <span class="stat-card-icon">🏆</span>
+          <div class="stat-card-number" data-counter="19" data-suffix=" Yrs">0</div>
+          <div class="stat-card-label">Years of Excellence</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SERVICES SECTION ═══ -->
+<section id="services" style="padding:90px 0;">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-badge">Our Services</span>
+      <h2 class="section-title">Comprehensive <span class="accent-text">Healthcare Services</span></h2>
+      <div class="section-divider"></div>
+      <p class="section-subtitle">From routine checkups to specialized treatments — we cover all your healthcare needs under one roof.</p>
+    </div>
+
+    <div class="row g-4">
+      {% set services = [
+        ('❤️','Cardiology','Heart disease diagnosis, ECG, echocardiography and cardiac care.'),
+        ('🦴','Orthopedics','Bone, joint and muscle disorders, fractures and sports injuries.'),
+        ('👶','Pediatrics','Specialized care for infants, children and adolescents.'),
+        ('🧠','Neurology','Brain, spine and nervous system disorders and treatment.'),
+        ('👁️','Ophthalmology','Complete eye care, vision correction and surgeries.'),
+        ('🦷','Dentistry','Oral health, dental surgery, cosmetic and preventive dentistry.'),
+        ('💊','General Medicine','Primary care, health checkups, fever, diabetes management.'),
+        ('🩺','Diagnostics','X-Ray, blood tests, MRI, ultrasound and laboratory services.')
+      ] %}
+      {% for icon, name, desc in services %}
+      <div class="col-lg-3 col-md-4 col-sm-6" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 80 }}">
+        <div class="service-card">
+          <div class="service-icon">{{ icon }}</div>
+          <h4 class="service-title">{{ name }}</h4>
+          <p class="service-desc">{{ desc }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DOCTORS SECTION ═══ -->
+{% if doctors %}
+<section style="padding:90px 0;background:#f8fbff;">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-badge">Medical Team</span>
+      <h2 class="section-title">Meet Our <span class="accent-text">Expert Doctors</span></h2>
+      <div class="section-divider"></div>
+      <p class="section-subtitle">Our team of highly qualified and experienced specialists are dedicated to your health and wellbeing.</p>
+    </div>
+
+    <div class="row g-4">
+      {% for doc in doctors %}
+      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
+        <div class="doctor-card">
+          <div class="doctor-card-header">
+            <div class="doctor-photo-wrap">
+              {% if doc.photo %}
+                <img src="{{ doc.photo }}" alt="{{ doc.name }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+              {% else %}
+                <span style="font-size:2.5rem;">👨‍⚕️</span>
+              {% endif %}
+            </div>
+            <span class="specialization-badge">{{ doc.specialization }}</span>
+          </div>
+          <div class="doctor-card-body">
+            <h5 class="doctor-name">Dr. {{ doc.name }}</h5>
+            <p class="doctor-qual">{{ doc.qualification or 'MBBS, MD' }}</p>
+            <div class="doctor-stats">
+              <div class="doctor-stat-item">
+                <div class="doctor-stat-value">{{ doc.experience }}+</div>
+                <div class="doctor-stat-label">Yrs Exp</div>
+              </div>
+              <div class="doctor-stat-item">
+                <div class="doctor-stat-value star-rating">
+                  {% for i in range(5) %}
+                    {% if i < doc.rating|int %}⭐{% else %}☆{% endif %}
+                  {% endfor %}
+                </div>
+                <div class="doctor-stat-label">Rating</div>
+              </div>
+              <div class="doctor-stat-item">
+                <div class="doctor-stat-value" style="color:var(--accent);">₹{{ doc.fee|int }}</div>
+                <div class="doctor-stat-label">Fee</div>
+              </div>
+            </div>
+            <a href="{{ url_for('patient.book_appointment') }}" class="btn-primary-custom w-100 justify-content-center" style="font-size:0.85rem;padding:10px;">
+              <i class="fas fa-calendar-plus"></i> Book Appointment
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-5" data-aos="fade-up">
+      <a href="{{ url_for('public.doctors') }}" class="btn-accent-custom">
+        <i class="fas fa-arrow-right me-2"></i>View All Doctors
+      </a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══ WHY CHOOSE US ═══ -->
+<section style="padding:90px 0;">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-5" data-aos="fade-right">
+        <div class="card-gradient" style="padding:40px;border-radius:24px;">
+          <h2 style="color:white;font-weight:800;font-size:2rem;margin-bottom:20px;">
+            Why Thousands Trust<br><span style="color:var(--accent-light);">LifeCare Clinic?</span>
+          </h2>
+          <p style="color:rgba(255,255,255,0.75);line-height:1.8;margin-bottom:24px;">
+            With 19 years of experience and a team of expert doctors, we deliver 
+            comprehensive healthcare with a personal touch.
+          </p>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            {% for point in ['24/7 Emergency Services', 'State-of-the-art Diagnostics', 'ISO Certified & NABH Accredited', 'Online Appointment Booking', 'Easy Insurance Processing'] %}
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:32px;height:32px;background:rgba(255,111,0,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--accent-light);font-size:0.85rem;flex-shrink:0;">✓</div>
+              <span style="color:rgba(255,255,255,0.85);font-weight:500;">{{ point }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          <a href="{{ url_for('public.about') }}" class="btn-accent-custom mt-4 d-inline-flex">
+            Learn More <i class="fas fa-arrow-right ms-2"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-7" data-aos="fade-left">
+        <div class="row g-3">
+          {% for icon, title, desc in [
+            ('🕐','24/7 Emergency','Round-the-clock emergency services for critical care.'),
+            ('🔬','Advanced Labs','Modern diagnostic equipment for accurate results.'),
+            ('💊','Expert Pharmacy','In-house pharmacy with all prescribed medicines.'),
+            ('🌐','Online Booking','Book appointments anytime, anywhere with ease.'),
+            ('🏆','Award Winning','Nationally recognized for excellence in healthcare.'),
+            ('❤️','Compassionate Care','Patient-centered approach with empathy and care.')
+          ] %}
+          <div class="col-md-6">
+            <div class="card-glass" style="padding:24px;border-radius:16px;" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 80 }}">
+              <div style="font-size:2rem;margin-bottom:12px;">{{ icon }}</div>
+              <h5 style="font-weight:700;color:var(--primary);margin-bottom:8px;">{{ title }}</h5>
+              <p style="color:var(--text-muted);font-size:0.88rem;margin:0;line-height:1.6;">{{ desc }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA SECTION ═══ -->
+<section style="background:var(--gradient-main);padding:80px 0;position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(255,111,0,0.1) 0%,transparent 60%);"></div>
+  <div class="container text-center" style="position:relative;z-index:1;">
+    <h2 style="color:white;font-weight:800;font-size:2.2rem;margin-bottom:16px;" data-aos="fade-up">
+      Ready to Take Control of Your Health?
+    </h2>
+    <p style="color:rgba(255,255,255,0.75);font-size:1rem;max-width:500px;margin:0 auto 32px;" data-aos="fade-up" data-aos-delay="100">
+      Join thousands of satisfied patients. Register today and book your appointment with our specialist doctors.
+    </p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap" data-aos="fade-up" data-aos-delay="200">
+      <a href="{{ url_for('auth.register') }}" class="btn-accent-custom ripple" style="padding:14px 32px;font-size:1rem;">
+        <i class="fas fa-user-plus me-2"></i>Register Free
+      </a>
+      <a href="{{ url_for('public.contact') }}" class="btn-hero-outline">
+        <i class="fas fa-phone me-2"></i>Contact Us
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

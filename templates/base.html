@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>{% block title %}LifeCare Clinic{% endblock %} | Quality Healthcare</title>
+  <meta name="description" content="{% block meta_desc %}LifeCare Clinic – Trusted healthcare services with experienced doctors.{% endblock %}">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏥</text></svg>">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- PAGE LOADER -->
+<div id="pageLoader" class="page-loader" aria-hidden="true">
+  <div class="loader-logo">🏥</div>
+  <p style="color:rgba(255,255,255,0.8);font-weight:600;letter-spacing:1px;margin-bottom:16px;">LifeCare Clinic</p>
+  <div class="loader-bar-wrap">
+    <div class="loader-bar"></div>
+  </div>
+</div>
+
+<!-- FLASH MESSAGES (hidden, shown as toasts by JS) -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="flash-alert d-none" data-category="{{ category }}" data-message="{{ message }}"></div>
+  {% endfor %}
+{% endwith %}
+
+<!-- TOAST CONTAINER -->
+<div id="toastContainer" class="toast-container" role="alert" aria-live="polite"></div>
+
+<!-- CSRF Token for AJAX -->
+<input type="hidden" id="csrfToken" value="{{ csrf_token() }}">
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-custom navbar-expand-lg" role="navigation">
+  <div class="container">
+    <!-- Brand -->
+    <a class="navbar-brand" href="{{ url_for('public.index') }}" aria-label="LifeCare Clinic Home">
+      <div class="brand-icon" aria-hidden="true">🏥</div>
+      <div class="brand-text">
+        <span class="brand-name">LifeCare Clinic</span>
+        <span class="brand-tagline">Your Health, Our Priority</span>
+      </div>
+    </a>
+
+    <!-- Toggler -->
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Toggle navigation">
+      <span style="display:block;width:22px;height:2px;background:white;margin:5px 0;border-radius:2px;transition:all 0.3s;"></span>
+      <span style="display:block;width:18px;height:2px;background:white;margin:5px 0;border-radius:2px;transition:all 0.3s;"></span>
+      <span style="display:block;width:22px;height:2px;background:white;margin:5px 0;border-radius:2px;transition:all 0.3s;"></span>
+    </button>
+
+    <!-- Nav Links -->
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav mx-auto gap-1">
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'public.index' %}active{% endif %}" href="{{ url_for('public.index') }}">
+            <i class="fas fa-home me-1"></i>Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'public.about' %}active{% endif %}" href="{{ url_for('public.about') }}">
+            <i class="fas fa-info-circle me-1"></i>About
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'public.services' %}active{% endif %}" href="{{ url_for('public.services') }}">
+            <i class="fas fa-heartbeat me-1"></i>Services
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'public.doctors' %}active{% endif %}" href="{{ url_for('public.doctors') }}">
+            <i class="fas fa-user-md me-1"></i>Doctors
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'public.contact' %}active{% endif %}" href="{{ url_for('public.contact') }}">
+            <i class="fas fa-phone me-1"></i>Contact
+          </a>
+        </li>
+      </ul>
+
+      <!-- Auth Buttons -->
+      <div class="d-flex gap-2 align-items-center mt-3 mt-lg-0">
+        {% if current_user.is_authenticated %}
+          <div class="dropdown">
+            <button class="btn btn-nav-register dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+              <span style="font-size:1.1rem;">👤</span>
+              {{ current_user.name.split()[0] }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              {% if current_user.role == 'admin' %}
+                <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</a></li>
+              {% else %}
+                <li><a class="dropdown-item" href="{{ url_for('patient.dashboard') }}"><i class="fas fa-home me-2"></i>Dashboard</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('patient.book_appointment') }}"><i class="fas fa-calendar-plus me-2"></i>Book Appointment</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('patient.my_appointments') }}"><i class="fas fa-calendar me-2"></i>My Appointments</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('patient.profile') }}"><i class="fas fa-user-edit me-2"></i>Profile</a></li>
+              {% endif %}
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
+                  <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a>
+              </li>
+            </ul>
+          </div>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}" class="btn btn-nav-login">
+            <i class="fas fa-sign-in-alt me-1"></i>Login
+          </a>
+          <a href="{{ url_for('auth.register') }}" class="btn btn-nav-register">
+            <i class="fas fa-user-plus me-1"></i>Register
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE CONTENT -->
+{% block content %}{% endblock %}
+
+<!-- FOOTER (shown only on public pages) -->
+{% block footer %}
+<footer class="footer">
+  <div class="container">
+    <div class="row g-4">
+      <!-- Brand Column -->
+      <div class="col-lg-4 col-md-6">
+        <div class="footer-brand">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div style="width:44px;height:44px;background:linear-gradient(135deg,#ff6f00,#ffa040);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">🏥</div>
+            <div class="footer-brand-name">LifeCare Clinic</div>
+          </div>
+          <p class="footer-brand-tagline">Your Health, Our Priority</p>
+        </div>
+        <p class="footer-desc">Providing quality healthcare services with experienced and compassionate doctors. Your wellbeing is our mission.</p>
+        <div class="social-links mt-3">
+          <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="col-lg-2 col-md-6 col-sm-6">
+        <h5 class="footer-title">Quick Links</h5>
+        <ul class="footer-links">
+          <li><a href="{{ url_for('public.index') }}">Home</a></li>
+          <li><a href="{{ url_for('public.about') }}">About Us</a></li>
+          <li><a href="{{ url_for('public.services') }}">Services</a></li>
+          <li><a href="{{ url_for('public.doctors') }}">Our Doctors</a></li>
+          <li><a href="{{ url_for('public.contact') }}">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Patient Links -->
+      <div class="col-lg-2 col-md-6 col-sm-6">
+        <h5 class="footer-title">Patient</h5>
+        <ul class="footer-links">
+          <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+          <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+          <li><a href="{{ url_for('patient.book_appointment') }}">Book Appointment</a></li>
+          <li><a href="{{ url_for('patient.my_appointments') }}">My Appointments</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="col-lg-4 col-md-6">
+        <h5 class="footer-title">Contact Us</h5>
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div>123 Health Street, Medical Colony<br>New Delhi – 110001</div>
+        </div>
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fas fa-phone"></i></div>
+          <div>+91 98765 43210<br>+91 11 2345 6789</div>
+        </div>
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fas fa-envelope"></i></div>
+          <div>info@lifecareclinic.com</div>
+        </div>
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fas fa-clock"></i></div>
+          <div>Mon–Sat: 9:00 AM – 7:00 PM<br>Sun: 10:00 AM – 2:00 PM</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2024 <strong style="color:rgba(255,255,255,0.7);">LifeCare Clinic</strong>. All rights reserved. Made with ❤️ for better healthcare.</p>
+      <p><a href="#" style="color:rgba(255,255,255,0.4);text-decoration:none;">Privacy Policy</a> &nbsp;|&nbsp; <a href="#" style="color:rgba(255,255,255,0.4);text-decoration:none;">Terms of Service</a></p>
+    </div>
+  </div>
+</footer>
+{% endblock %}
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JS -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

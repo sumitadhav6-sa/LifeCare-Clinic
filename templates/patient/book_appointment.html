@@ -1,0 +1,162 @@
+{% extends "patient/base_patient.html" %}
+{% block title %}Book Appointment{% endblock %}
+
+{% block content %}
+<div>
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 style="font-weight:800;color:var(--primary);margin-bottom:4px;">📅 Book Appointment</h2>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin:0;">Schedule a consultation with our specialist doctors</p>
+    </div>
+    <a href="{{ url_for('patient.my_appointments') }}" class="btn-primary-custom" style="font-size:0.85rem;padding:10px 18px;">
+      <i class="fas fa-list me-2"></i>My Appointments
+    </a>
+  </div>
+
+  <div class="row g-4">
+    <!-- Booking Form -->
+    <div class="col-lg-8">
+      <div class="form-section" data-aos="fade-up">
+        <form method="POST" action="{{ url_for('patient.book_appointment') }}" id="bookingForm" class="needs-validation" novalidate>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="time_slot" id="slotInput">
+
+          <!-- Step 1: Doctor -->
+          <div class="mb-4">
+            <label class="form-label" style="font-size:1rem;font-weight:700;color:var(--primary);">
+              <span style="background:var(--gradient-accent);color:white;width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:0.85rem;margin-right:8px;">1</span>
+              Select Doctor
+            </label>
+            <select class="form-select" name="doctor_id" id="doctorSelect" required>
+              <option value="">— Choose a specialist doctor —</option>
+              {% for doc in doctors %}
+              <option value="{{ doc.id }}">
+                Dr. {{ doc.name }} | {{ doc.specialization }} | ₹{{ doc.fee|int }} | {{ doc.experience }}+ yrs exp
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Doctor Info (shown after selection) -->
+          <div id="doctorInfoCard" class="d-none mb-4">
+            <div style="background:linear-gradient(135deg,rgba(26,35,126,0.06),rgba(255,111,0,0.06));border:1px solid rgba(26,35,126,0.12);border-radius:16px;padding:20px;">
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                  <div style="font-weight:700;color:var(--primary);">Selected Doctor</div>
+                  <div class="fee-card d-none" style="font-size:0.88rem;color:var(--text-muted);">
+                    Consultation Fee: <strong style="color:var(--accent);" id="feeDisplay">₹0</strong>
+                  </div>
+                </div>
+                <div id="availabilityInfo" style="font-size:0.85rem;color:var(--text-muted);"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Date -->
+          <div class="mb-4">
+            <label class="form-label" style="font-size:1rem;font-weight:700;color:var(--primary);">
+              <span style="background:var(--gradient-accent);color:white;width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:0.85rem;margin-right:8px;">2</span>
+              Select Appointment Date
+            </label>
+            <input type="date" name="date" class="form-control appointment-date" required>
+          </div>
+
+          <!-- Step 3: Time Slot -->
+          <div class="mb-4">
+            <label class="form-label" style="font-size:1rem;font-weight:700;color:var(--primary);">
+              <span style="background:var(--gradient-accent);color:white;width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:0.85rem;margin-right:8px;">3</span>
+              Select Time Slot
+            </label>
+            <div id="slotGrid" class="slot-grid">
+              <p style="color:var(--text-muted);font-size:0.9rem;">← Select a doctor to see available time slots.</p>
+            </div>
+          </div>
+
+          <!-- Step 4: Symptoms -->
+          <div class="mb-4">
+            <label class="form-label" style="font-size:1rem;font-weight:700;color:var(--primary);">
+              <span style="background:rgba(26,35,126,0.1);color:var(--primary);width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:0.85rem;margin-right:8px;">4</span>
+              Symptoms / Reason (Optional)
+            </label>
+            <textarea name="symptoms" class="form-control" rows="3"
+              placeholder="Describe your symptoms or reason for visit (optional)..."></textarea>
+          </div>
+
+          <!-- Submit -->
+          <div style="background:rgba(0,200,83,0.06);border:1px solid rgba(0,200,83,0.2);border-radius:12px;padding:16px;margin-bottom:20px;">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="font-size:1.1rem;">ℹ️</span>
+              <div style="font-size:0.85rem;color:#2e7d32;line-height:1.6;">
+                <strong>Note:</strong> Your appointment will be in <strong>Pending</strong> status until confirmed by the clinic. You'll be notified once approved.
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-accent-custom w-100 justify-content-center ripple" style="padding:16px;font-size:1rem;"
+            onclick="validateBooking(event)">
+            <i class="fas fa-calendar-check me-2"></i>Confirm Booking
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Sidebar Info -->
+    <div class="col-lg-4">
+      <!-- Tips Card -->
+      <div class="table-card mb-4" data-aos="fade-up">
+        <div class="table-card-header">
+          <span class="table-card-title"><i class="fas fa-lightbulb" style="color:var(--accent);"></i>Booking Tips</span>
+        </div>
+        <div style="padding:16px;">
+          {% for tip in [
+            ('📋','Complete all fields accurately for a smooth experience.'),
+            ('🕐','Arrive 15 minutes before your scheduled time.'),
+            ('📱','Carry a valid ID proof on appointment day.'),
+            ('💊','Bring any previous prescriptions or reports.'),
+            ('📞','Call us to reschedule at least 2 hours before.')
+          ] %}
+          <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(26,35,126,0.06);">
+            <span style="font-size:1.1rem;flex-shrink:0;">{{ tip[0] }}</span>
+            <span style="font-size:0.85rem;color:var(--text-muted);line-height:1.5;">{{ tip[1] }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Emergency Card -->
+      <div style="background:linear-gradient(135deg,#b71c1c,#e53935);border-radius:16px;padding:20px;color:white;">
+        <div style="font-size:2rem;margin-bottom:10px;">🚑</div>
+        <h5 style="font-weight:800;margin-bottom:8px;">Emergency?</h5>
+        <p style="font-size:0.85rem;opacity:0.85;margin-bottom:14px;">For medical emergencies, do not wait. Call us immediately!</p>
+        <a href="tel:9876543210" style="background:white;color:#c62828;padding:10px 20px;border-radius:10px;text-decoration:none;font-weight:700;font-size:0.9rem;display:inline-flex;align-items:center;gap:8px;">
+          <i class="fas fa-phone"></i> Call Now
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const doctorSelect = document.getElementById('doctorSelect');
+doctorSelect?.addEventListener('change', function() {
+  const infoCard = document.getElementById('doctorInfoCard');
+  if (this.value) {
+    infoCard.classList.remove('d-none');
+    document.querySelector('.fee-card')?.classList.remove('d-none');
+  } else {
+    infoCard.classList.add('d-none');
+  }
+});
+
+function validateBooking(e) {
+  const slotInput = document.getElementById('slotInput');
+  if (!slotInput.value) {
+    e.preventDefault();
+    Toast.warning('Please select a time slot before confirming.', 'Select Slot');
+    return false;
+  }
+}
+</script>
+{% endblock %}

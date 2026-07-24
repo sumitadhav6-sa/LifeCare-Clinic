@@ -1,0 +1,144 @@
+{% extends "patient/base_patient.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div>
+  <div class="mb-4">
+    <h2 style="font-weight:800;color:var(--primary);margin-bottom:4px;">👤 My Profile</h2>
+    <p style="color:var(--text-muted);font-size:0.9rem;margin:0;">Manage your personal information and account settings</p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Profile Card -->
+    <div class="col-lg-4">
+      <div class="dash-stat-card text-center mb-4" data-aos="fade-up">
+        <div style="width:90px;height:90px;background:var(--gradient-main);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 16px;border:4px solid rgba(255,111,0,0.3);box-shadow:0 10px 30px rgba(26,35,126,0.2);">
+          {{ current_user.name[0].upper() }}
+        </div>
+        <h4 style="font-weight:800;color:var(--primary);margin-bottom:4px;">{{ current_user.name }}</h4>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:12px;">{{ current_user.email }}</p>
+        <span class="status-badge {% if current_user.is_verified %}status-verified{% else %}status-pending{% endif %}">
+          {% if current_user.is_verified %}✓ Verified{% else %}⚠ Unverified{% endif %}
+        </span>
+        {% if current_user.blood_group %}
+        <div style="margin-top:12px;">
+          <span style="background:rgba(244,67,54,0.1);color:#c62828;padding:6px 16px;border-radius:20px;font-size:0.85rem;font-weight:700;">
+            🩸 Blood Group: {{ current_user.blood_group }}
+          </span>
+        </div>
+        {% endif %}
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(26,35,126,0.08);text-align:left;">
+          {% if current_user.phone %}
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <i class="fas fa-phone" style="color:var(--accent);width:16px;"></i>
+            <span style="font-size:0.88rem;color:var(--text-muted);">{{ current_user.phone }}</span>
+          </div>
+          {% endif %}
+          {% if current_user.gender %}
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <i class="fas fa-venus-mars" style="color:var(--accent);width:16px;"></i>
+            <span style="font-size:0.88rem;color:var(--text-muted);">{{ current_user.gender }}</span>
+          </div>
+          {% endif %}
+          {% if current_user.dob %}
+          <div style="display:flex;gap:8px;align-items:center;">
+            <i class="fas fa-birthday-cake" style="color:var(--accent);width:16px;"></i>
+            <span style="font-size:0.88rem;color:var(--text-muted);">{{ current_user.dob.strftime('%d %b %Y') }}</span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Forms -->
+    <div class="col-lg-8">
+      <!-- Update Profile -->
+      <div class="form-section mb-4" data-aos="fade-up">
+        <h4 style="color:var(--primary);font-weight:800;margin-bottom:24px;">
+          <i class="fas fa-user-edit me-2" style="color:var(--accent);"></i>Update Profile
+        </h4>
+        <form method="POST" class="needs-validation" novalidate>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="update_profile">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Full Name</label>
+              <input type="text" name="name" class="form-control" value="{{ current_user.name }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Phone Number</label>
+              <div class="input-group">
+                <span class="input-group-text">+91</span>
+                <input type="tel" name="phone" class="form-control" value="{{ current_user.phone or '' }}" pattern="[6-9][0-9]{9}" maxlength="10">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Gender</label>
+              <select name="gender" class="form-select">
+                <option value="">Select</option>
+                {% for g in ['Male','Female','Other'] %}
+                <option value="{{ g }}" {% if current_user.gender == g %}selected{% endif %}>{{ g }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Date of Birth</label>
+              <input type="date" name="dob" class="form-control"
+                value="{{ current_user.dob.strftime('%Y-%m-%d') if current_user.dob else '' }}">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Blood Group</label>
+              <select name="blood_group" class="form-select">
+                <option value="">Select</option>
+                {% for bg in ['A+','A-','B+','B-','AB+','AB-','O+','O-'] %}
+                <option value="{{ bg }}" {% if current_user.blood_group == bg %}selected{% endif %}>{{ bg }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Address</label>
+              <textarea name="address" class="form-control" rows="2" placeholder="Your full address">{{ current_user.address or '' }}</textarea>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn-primary-custom ripple">
+                <i class="fas fa-save me-2"></i>Save Changes
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Change Password -->
+      <div class="form-section" data-aos="fade-up" data-aos-delay="100">
+        <h4 style="color:var(--primary);font-weight:800;margin-bottom:24px;">
+          <i class="fas fa-lock me-2" style="color:var(--accent);"></i>Change Password
+        </h4>
+        <form method="POST" class="needs-validation" novalidate>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="change_password">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Current Password</label>
+              <input type="password" name="old_password" class="form-control" required placeholder="Current password">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">New Password</label>
+              <input type="password" name="new_password" id="passwordInput" class="form-control" required minlength="8" placeholder="Min. 8 characters">
+              <div id="passwordStrength"></div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Confirm New Password</label>
+              <input type="password" name="confirm_password" class="form-control" required placeholder="Confirm new password">
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn-accent-custom ripple">
+                <i class="fas fa-key me-2"></i>Update Password
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

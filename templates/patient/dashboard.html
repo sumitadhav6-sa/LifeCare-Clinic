@@ -1,0 +1,167 @@
+{% extends "patient/base_patient.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div>
+  <!-- Welcome Header -->
+  <div style="background:var(--gradient-main);border-radius:20px;padding:28px 32px;margin-bottom:28px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:-20px;right:-20px;width:150px;height:150px;background:rgba(255,255,255,0.05);border-radius:50%;"></div>
+    <div style="position:absolute;bottom:-30px;right:80px;width:100px;height:100px;background:rgba(255,111,0,0.1);border-radius:50%;"></div>
+    <div style="position:relative;z-index:1;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+        <div>
+          <p style="color:rgba(255,255,255,0.7);font-size:0.88rem;margin-bottom:6px;">
+            <i class="fas fa-calendar me-1"></i> {{ today.strftime('%A, %d %B %Y') }}
+          </p>
+          <h2 style="color:white;font-weight:800;font-size:1.6rem;margin:0;">
+            Hello, {{ current_user.name.split()[0] }}! 👋
+          </h2>
+          <p style="color:rgba(255,255,255,0.7);margin:8px 0 0;font-size:0.9rem;">
+            Welcome to your health dashboard. Stay on track with your appointments.
+          </p>
+        </div>
+        <a href="{{ url_for('patient.book_appointment') }}" class="btn-accent-custom ripple" style="white-space:nowrap;">
+          <i class="fas fa-plus-circle me-2"></i>Book Appointment
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-sm-6 col-xl-3" data-aos="fade-up" data-aos-delay="0">
+      <div class="dash-stat-card">
+        <div class="dash-stat-icon" style="background:rgba(26,35,126,0.1);">📅</div>
+        <div class="dash-stat-number" data-counter="{{ total }}">{{ total }}</div>
+        <div class="dash-stat-label">Total Appointments</div>
+        <div class="dash-stat-change change-up"><i class="fas fa-arrow-up me-1"></i>All time</div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3" data-aos="fade-up" data-aos-delay="80">
+      <div class="dash-stat-card">
+        <div class="dash-stat-icon" style="background:rgba(0,200,83,0.1);">✅</div>
+        <div class="dash-stat-number" style="color:var(--success);">{{ approved }}</div>
+        <div class="dash-stat-label">Approved</div>
+        <div class="dash-stat-change change-up"><i class="fas fa-check-circle me-1" style="color:var(--success);"></i>Confirmed</div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3" data-aos="fade-up" data-aos-delay="160">
+      <div class="dash-stat-card">
+        <div class="dash-stat-icon" style="background:rgba(255,171,0,0.1);">⏳</div>
+        <div class="dash-stat-number" style="color:var(--warning);">{{ pending }}</div>
+        <div class="dash-stat-label">Pending</div>
+        <div class="dash-stat-change" style="color:var(--warning);"><i class="fas fa-clock me-1"></i>Awaiting</div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3" data-aos="fade-up" data-aos-delay="240">
+      <div class="dash-stat-card">
+        <div class="dash-stat-icon" style="background:rgba(255,111,0,0.1);">📋</div>
+        <div class="dash-stat-number" style="color:var(--accent);">{{ upcoming|length }}</div>
+        <div class="dash-stat-label">Upcoming</div>
+        <div class="dash-stat-change" style="color:var(--accent);"><i class="fas fa-calendar-alt me-1"></i>Scheduled</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Upcoming Appointments -->
+    <div class="col-lg-8">
+      <div class="table-card" data-aos="fade-up">
+        <div class="table-card-header">
+          <span class="table-card-title"><i class="fas fa-calendar-check" style="color:var(--accent);"></i>Upcoming Appointments</span>
+          <a href="{{ url_for('patient.my_appointments') }}" style="color:var(--accent);font-size:0.85rem;text-decoration:none;font-weight:600;">
+            View All <i class="fas fa-arrow-right ms-1"></i>
+          </a>
+        </div>
+
+        {% if upcoming %}
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>Doctor</th><th>Specialization</th><th>Date</th><th>Time</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for appt in upcoming %}
+              <tr>
+                <td>
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:36px;height:36px;background:var(--gradient-main);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">👨‍⚕️</div>
+                    <div>
+                      <div style="font-weight:600;color:var(--primary);font-size:0.9rem;">Dr. {{ appt.doctor.name }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span style="font-size:0.85rem;">{{ appt.doctor.specialization }}</span></td>
+                <td>
+                  <div style="font-weight:600;font-size:0.88rem;">{{ appt.date.strftime('%d %b') }}</div>
+                  <div style="font-size:0.78rem;color:var(--text-muted);">{{ appt.date.strftime('%Y') }}</div>
+                </td>
+                <td><span style="background:rgba(26,35,126,0.08);color:var(--primary);padding:4px 10px;border-radius:6px;font-size:0.82rem;font-weight:600;">{{ appt.time_slot }}</span></td>
+                <td>
+                  <span class="status-badge status-{{ appt.status }}">
+                    {% if appt.status == 'approved' %}✓{% elif appt.status == 'pending' %}⏳{% else %}✗{% endif %}
+                    {{ appt.status.capitalize() }}
+                  </span>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div style="padding:40px 24px;text-align:center;">
+          <div style="font-size:3rem;margin-bottom:16px;">📅</div>
+          <h5 style="color:var(--primary);font-weight:700;">No Upcoming Appointments</h5>
+          <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:20px;">You don't have any scheduled appointments.</p>
+          <a href="{{ url_for('patient.book_appointment') }}" class="btn-accent-custom">
+            <i class="fas fa-plus me-2"></i>Book Now
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Quick Info Card -->
+    <div class="col-lg-4">
+      <!-- Profile Card -->
+      <div class="dash-stat-card mb-4" style="text-align:center;" data-aos="fade-up" data-aos-delay="100">
+        <div style="width:70px;height:70px;background:var(--gradient-main);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 16px;border:3px solid rgba(255,111,0,0.3);">
+          {{ current_user.name[0].upper() }}
+        </div>
+        <h5 style="font-weight:700;color:var(--primary);margin-bottom:4px;">{{ current_user.name }}</h5>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:12px;">{{ current_user.email }}</p>
+        {% if current_user.blood_group %}
+        <span style="background:rgba(244,67,54,0.1);color:#c62828;padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:700;">
+          🩸 {{ current_user.blood_group }}
+        </span>
+        {% endif %}
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(26,35,126,0.08);">
+          <a href="{{ url_for('patient.profile') }}" class="btn-primary-custom w-100 justify-content-center" style="font-size:0.85rem;padding:10px;">
+            <i class="fas fa-user-edit me-2"></i>Edit Profile
+          </a>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="table-card" data-aos="fade-up" data-aos-delay="150">
+        <div class="table-card-header">
+          <span class="table-card-title"><i class="fas fa-bolt" style="color:var(--accent);"></i>Quick Actions</span>
+        </div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:10px;">
+          <a href="{{ url_for('patient.book_appointment') }}" class="btn-primary-custom justify-content-center" style="padding:12px;">
+            <i class="fas fa-calendar-plus me-2"></i>Book Appointment
+          </a>
+          <a href="{{ url_for('patient.my_appointments') }}" class="btn-accent-custom justify-content-center" style="padding:12px;">
+            <i class="fas fa-list me-2"></i>View All Appointments
+          </a>
+          <a href="{{ url_for('public.doctors') }}" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:rgba(26,35,126,0.06);border-radius:12px;color:var(--primary);text-decoration:none;font-weight:600;font-size:0.9rem;transition:all 0.3s;">
+            <i class="fas fa-user-md"></i>Browse Doctors
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
