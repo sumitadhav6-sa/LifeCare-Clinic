@@ -51,9 +51,9 @@ def send_otp_email(email, otp_code, patient_name='Patient'):
 
         msg.html = html_body
 
-        print("========== EMAIL DEBUG ==========")
-        print("MAIL_USERNAME:", current_app.config.get("MAIL_USERNAME"))
-        print("Sending email to:", email)
+       print("========== EMAIL DEBUG ==========")
+       print("MAIL_USERNAME:", ...)
+       print("Sending email...")
 
         mail.send(msg)
 

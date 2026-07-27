@@ -49,7 +49,7 @@ def create_app():
 
     app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_USERNAME")
 
-    app.config["MAIL_TIMEOUT"] = 10
+    app.config["MAIL_TIMEOUT"] = 5
     app.config["MAIL_MAX_EMAILS"] = 1
     app.config["MAIL_ASCII_ATTACHMENTS"] = False
 
