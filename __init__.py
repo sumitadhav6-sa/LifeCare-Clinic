@@ -12,10 +12,8 @@ from flask_mail import Mail
 from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
-# Initialize extensions
 db = SQLAlchemy()
 login_manager = LoginManager()
 mail = Mail()
@@ -26,6 +24,7 @@ def create_app():
     app = Flask(__name__)
 
     # ================= Configuration =================
+
     app.config["SECRET_KEY"] = os.getenv(
         "SECRET_KEY",
         "dev-secret-key-change-in-prod"
@@ -38,27 +37,36 @@ def create_app():
 
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    # ================= Mail =================
-    app.config["MAIL_SERVER"] = "smtp.gmail.com"
-    app.config["MAIL_PORT"] = 587
+    # ================= Brevo SMTP =================
+
+    app.config["MAIL_SERVER"] = os.getenv(
+        "MAIL_SERVER",
+        "smtp-relay.brevo.com"
+    )
+
+    app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT", 587))
+
     app.config["MAIL_USE_TLS"] = True
     app.config["MAIL_USE_SSL"] = False
 
     app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
     app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 
-    app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_USERNAME")
+    app.config["MAIL_DEFAULT_SENDER"] = os.getenv(
+        "MAIL_DEFAULT_SENDER",
+        "lifecareclinic0203@gmail.com"
+    )
 
-    app.config["MAIL_TIMEOUT"] = 5
-    app.config["MAIL_MAX_EMAILS"] = 1
-    app.config["MAIL_ASCII_ATTACHMENTS"] = False
+    app.config["MAIL_TIMEOUT"] = 30
 
     # ================= Session =================
+
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
     app.config["PERMANENT_SESSION_LIFETIME"] = 3600
 
     # ================= Extensions =================
+
     db.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
@@ -69,6 +77,7 @@ def create_app():
     login_manager.login_message_category = "warning"
 
     # ================= Blueprints =================
+
     from routes.public import public_bp
     from routes.auth import auth_bp
     from routes.patient import patient_bp
@@ -80,6 +89,7 @@ def create_app():
     app.register_blueprint(admin_bp, url_prefix="/admin")
 
     # ================= Database =================
+
     with app.app_context():
         from models.user import User
         from models.doctor import Doctor
