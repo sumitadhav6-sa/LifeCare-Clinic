@@ -17,7 +17,7 @@ def generate_otp(length=6):
     return ''.join(random.choices(string.digits, k=length))
 
 
-def send_otp_email(email, otp_code, patient_name='Patient'):
+def send_otp_email(email, otp_code, patient_name="Patient"):
     """
     Send OTP verification email.
     Returns (success: bool, message: str)
@@ -30,15 +30,19 @@ def send_otp_email(email, otp_code, patient_name='Patient'):
         <html>
         <body style="font-family:Arial,sans-serif;">
             <h2>🏥 LifeCare Clinic</h2>
+
             <p>Hello <strong>{patient_name}</strong>,</p>
+
             <p>Your OTP for email verification is:</p>
 
             <h1 style="color:#ff6600;">{otp_code}</h1>
 
             <p>This OTP is valid for <strong>10 minutes</strong>.</p>
+
             <p>Please do not share this OTP with anyone.</p>
 
             <br>
+
             <p>Thank you,<br>LifeCare Clinic Team</p>
         </body>
         </html>
@@ -46,14 +50,13 @@ def send_otp_email(email, otp_code, patient_name='Patient'):
 
         msg = Message(
             subject=subject,
-            recipients=[email]
+            recipients=[email],
+            html=html_body
         )
 
-        msg.html = html_body
-
-       print("========== EMAIL DEBUG ==========")
-       print("MAIL_USERNAME:", ...)
-       print("Sending email...")
+        print("========== EMAIL DEBUG ==========")
+        print("MAIL_USERNAME:", current_app.config.get("MAIL_USERNAME"))
+        print("Sending email to:", email)
 
         mail.send(msg)
 
@@ -68,7 +71,7 @@ def send_otp_email(email, otp_code, patient_name='Patient'):
         return False, str(e)
 
 
-def create_and_send_otp(email, name='Patient'):
+def create_and_send_otp(email, name="Patient"):
     """
     Generate OTP, save in database, send email.
     """
