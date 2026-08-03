@@ -37,15 +37,14 @@ def create_app():
 
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    # ================= Brevo SMTP =================
+    # ================= Gmail SMTP =================
 
     app.config["MAIL_SERVER"] = os.getenv(
         "MAIL_SERVER",
-        "smtp-relay.brevo.com"
+        "smtp.gmail.com"
     )
 
     app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT", 587))
-
     app.config["MAIL_USE_TLS"] = True
     app.config["MAIL_USE_SSL"] = False
 
@@ -54,7 +53,7 @@ def create_app():
 
     app.config["MAIL_DEFAULT_SENDER"] = os.getenv(
         "MAIL_DEFAULT_SENDER",
-        "lifecareclinic0203@gmail.com"
+        os.getenv("MAIL_USERNAME")
     )
 
     app.config["MAIL_TIMEOUT"] = 30
@@ -108,12 +107,12 @@ def _seed_admin():
 
     admin_email = os.getenv(
         "ADMIN_EMAIL",
-        "admin@lifecareclinic.com"
+        "admin@lifecareclinic0203.com"
     )
 
     admin_password = os.getenv(
         "ADMIN_PASSWORD",
-        "Admin@123456"
+        "Admin@123"
     )
 
     existing = User.query.filter_by(email=admin_email).first()
