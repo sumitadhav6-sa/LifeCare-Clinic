@@ -230,9 +230,9 @@ webapp/
 
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | admin@lifecareclinic.com | Admin@123456 |
+| Admin | admin123@gmail.com | admin@123 |
 | Patient | Register via /auth/register | Your chosen password |
 
 ---
 
-*© 2024 LifeCare Clinic. Built with ❤️ for better healthcare.*
+*© 2026 LifeCare Clinic. Built with ❤️ for better healthcare.*

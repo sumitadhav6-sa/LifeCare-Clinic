@@ -107,12 +107,12 @@ def _seed_admin():
 
     admin_email = os.getenv(
         "ADMIN_EMAIL",
-        "admin@lifecareclinic0203.com"
+        "admin123@gmail.com"
     )
 
     admin_password = os.getenv(
         "ADMIN_PASSWORD",
-        "Admin@123"
+        "admin@123"
     )
 
     existing = User.query.filter_by(email=admin_email).first()
